@@ -1,0 +1,17 @@
+/*General style*/
+
+body{
+    background-color: #E7F4FF;
+}
+
+option{
+    background-color: #003158;
+    color:white; /*blue*/
+}
+h2{
+    font-weight: bold;
+    color: #003158;
+}
+p{
+    font-size: 14pt;
+}
