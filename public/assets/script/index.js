@@ -225,7 +225,10 @@ const results = {
   ]
 }
 /****************************************** Main ******************************************/
-const URL = "https://gointegrations-devtest.myshopify.com" 
+const API_KEY = "edd7fd7dac31cb81df28f91455649911";
+const PASSWORD = "330c304080eb8a70845b94ad0269bc50";
+const PATH = "@gointegrations-devtest.myshopify.com";
+const myURL = "https://" + API_KEY + ":" + PASSWORD + PATH;
 
 $(document).ready(function(){
       create_products_section(results.products)
@@ -283,13 +286,12 @@ function create_order(title, price)
 
     console.log(order)
     $.ajax({
-        url: URL + "/admin/draft_orders.json",
+        url: myURL + "/admin/draft_orders.json",
         datatype:"json",
-        type:"post",
+        type:"POST",
         data: order,
-        headers:{"Access-Control-Allow-Origin": "*"}
+        crossDomain:true
     }).done(function(result) {
-
         console.log(results)
     });
 }
