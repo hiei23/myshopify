@@ -67,7 +67,7 @@ function create_order(title, price)
                     }
                 }
 
-    console.log(draft_order)
+    console.log("sending",draft_order)
     $.ajax({
         url: "/products/draft_order",
         datatype:"json",
@@ -76,6 +76,6 @@ function create_order(title, price)
         headers:{"Access-Control-Allow-Origin": "*"}
     }).done(function(results) {
 
-        console.log(results)
+        console.log("received",results)
     });
 }

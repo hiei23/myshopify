@@ -3,12 +3,12 @@ var express = require('express'),
     
 var router = express.Router(),
     MongoClient = require('mongodb').MongoClient,
-    shopifyAPI = require('shopify-api-node');
+    shopifyAPI = require('shopify-node-api');
 
 var Shopify = new shopifyAPI({
-      shopName: "gointegrations-devtest", // MYSHOP.myshopify.com 
-      apiKey: 'edd7fd7dac31cb81df28f91455649911', // Your API key 
-      password: "330c304080eb8a70845b94ad0269bc50",
+      shop: "gointegrations-devtest", // MYSHOP.myshopify.com 
+      shopify_api_key: 'edd7fd7dac31cb81df28f91455649911', // Your API key 
+      access_token: "330c304080eb8a70845b94ad0269bc50",
     });
 
 
@@ -32,18 +32,19 @@ router.post('/draft_order', function(req, res){
 exports.fetchShopifyProducts = function()
 {
     console.log("inside fetch")
-    Shopify.product.list()
-      .then(data => insertProduct(data.products))
-      .catch(err => console.error(err));
+    Shopify.get('/admin/products.json', function(err, data) {
+      insertProduct(data.products); // Data contains product json information 
+    });
+
 }
 
 function createShopifyDraftOrder (draft_order, res) {
 
     console.log("Inside draftOrder")
     console.log(draft_order)
-    Shopify.draftOrder.create(draft_order)
-      .then(data => res.send(data))
-      .catch(err => console.error(err));
+    Shopify.post('/admin/draft_orders.json', draft_order, function(err, data){
+      res.send(data) // Data contains product json information 
+    });
 }
 
 //exports.fetchShopifyProducts()
