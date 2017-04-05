@@ -42,9 +42,8 @@ function createShopifyDraftOrder (draft_order, res) {
     console.log("Inside draftOrder")
     console.log(draft_order)
     Shopify.draftOrder.create(draft_order)
-      .then(data => console.log(data))
+      .then(data => res.send(data))
       .catch(err => console.error(err));
-      //res.send(data)
 }
 
 //exports.fetchShopifyProducts()
