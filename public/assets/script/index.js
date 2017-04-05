@@ -8,7 +8,7 @@ $(document).ready(function(){
 function getProducts()
 {
   $.ajax({
-        url: "http://localhost:3000/products/products.json",
+        url: "/products/products.json",
         datatype:"json",
         type:"GET",
         headers:{"Access-Control-Allow-Origin": "*"}
@@ -69,7 +69,7 @@ function create_order(title, price)
 
     console.log(draft_order)
     $.ajax({
-        url: "http://localhost:3000/products/draft_order",
+        url: "/products/draft_order",
         datatype:"json",
         type:"post",
         data: {data:JSON.stringify(draft_order)},
