@@ -6,17 +6,9 @@ var username = 'admin';
 var password = '123456';
 
 var DATABASE_URL = 'mongodb://'+ username + ':' + password + '@ds149030.mlab.com:49030/myshopify';
+
 router.get('/', function(req, res){
     res.sendFile('index.html');
-});
-
-router.get('/products/products.json', function(req, res){
-    findAllProducts(res)
-});
-
-router.use("*",function(req,res){
-  	console.log("not found")
- 	res.status(404).send('404');
 });
 
 function findAllProducts(res) {

@@ -1,6 +1,16 @@
-var express = require('express');
+var express = require('express'),
+    app = express();
+    
 var router = express.Router(),
-    MongoClient = require('mongodb').MongoClient;
+    MongoClient = require('mongodb').MongoClient,
+    shopifyAPI = require('shopify-api-node');
+
+var Shopify = new shopifyAPI({
+      shopName: "gointegrations-devtest", // MYSHOP.myshopify.com 
+      apiKey: 'edd7fd7dac31cb81df28f91455649911', // Your API key 
+      password: "330c304080eb8a70845b94ad0269bc50",
+    });
+
 
 const DB_USERNAME = 'admin';
 const DB_PASSWORD = '123456';
@@ -8,57 +18,37 @@ const DB_PASSWORD = '123456';
 var DATABASE_URL = 'mongodb://'+ DB_USERNAME + ':' + DB_PASSWORD + '@ds149030.mlab.com:49030/myshopify';
 
 
-router.get('/products/products.json', function(req, res){
+router.get('/products.json', function(req, res){
     findAllProducts(res)
 });
 
+router.post('/draft_order', function(req, res){
+
+    var draft_order = JSON.parse(req.body.data)
+    createShopifyDraftOrder ( draft_order, res)
+});
+
+
 exports.fetchShopifyProducts = function()
 {
-    const https = require('https');
-    const API_KEY = "edd7fd7dac31cb81df28f91455649911";
-    const PASSWORD = "330c304080eb8a70845b94ad0269bc50";
-    const PATH = "@gointegrations-devtest.myshopify.com/admin/products.json";
-    const URL = "https://" + API_KEY + ":" + PASSWORD + PATH ;
-
-    https.get(URL, function (res) {
-        const statusCode = res.statusCode;
-        const contentType = res.headers['content-type'];
-
-        let error;
-        if (statusCode !== 200) {
-            error = new Error("Request Failed.\n" +
-                          "Status Code: " + statusCode);
-        } 
-
-        else if (!/^application\/json/.test(contentType)) {
-            error = new Error("Invalid content-type.\n" +
-                                "Expected application/json but received" + contentType);
-        }
-        
-        if (error) {
-            console.log(error.message);
-            // consume response data to free up memory
-            res.resume();
-            return;
-        }
-
-        res.setEncoding('utf8');
-        let rawData = '';
-        res.on('data', function(data) { rawData = data});
-        res.on('end', function() {
-            try {
-                    let parsedData = JSON.parse(rawData);
-                    insertProduct(parsedData.products)
-            } 
-            catch (e) {
-                console.log(e.message);
-            }
-        });
-    }).on('error', function(e) {
-        console.log("Got error: " + e.message);
-    });
+    console.log("inside fetch")
+    Shopify.product.list()
+      .then(data => insertProduct(data.products))
+      .catch(err => console.error(err));
 }
 
+function createShopifyDraftOrder (draft_order, res) {
+
+    console.log("Inside draftOrder")
+    console.log(draft_order)
+    Shopify.draftOrder.create(draft_order)
+      .then(data => console.log(data))
+      .catch(err => console.error(err));
+      //res.send(data)
+}
+
+//exports.fetchShopifyProducts()
+//exports.createShopifyDraftOrder()
 function insertProduct(data)
 {
     MongoClient.connect(DATABASE_URL, function(err, db) {
